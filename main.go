@@ -5,19 +5,10 @@ import (
 	"github.com/SeriyBg/godo/repository"
 	"github.com/codegangsta/cli"
 	"os"
-	"time"
 )
 
 func Add(c *cli.Context) (err error) {
-	now := time.Now()
-	note := repository.Note{
-		Name:        c.String("name"),
-		Description: c.String("description"),
-		State:       repository.New,
-		Created:     now,
-		Updated:     now,
-	}
-	return repository.AddNote(note)
+	return repository.AddNote(c.String("name"), c.String("description"))
 }
 
 func Show(c *cli.Context) (err error) {
