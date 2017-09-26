@@ -1,13 +1,30 @@
 package main
 
 import (
+	"fmt"
+	"github.com/SeriyBg/godo/repository"
 	"github.com/codegangsta/cli"
 	"os"
 	"time"
 )
 
 func Add(c *cli.Context) (err error) {
-	//name := c.String("name")
+	now := time.Now()
+	note := repository.Note{
+		Name:        c.String("name"),
+		Description: c.String("description"),
+		State:       repository.New,
+		Created:     now,
+		Updated:     now,
+	}
+	return repository.AddNote(note)
+}
+
+func Show(c *cli.Context) (err error) {
+	notes, err := repository.ShowAll()
+	for _, note := range notes {
+		fmt.Println(note)
+	}
 	return
 }
 
@@ -22,28 +39,12 @@ func main() {
 			Usage:   "Create a new TODO task",
 			Action:  Add,
 		},
+		{
+			Name:    "show",
+			Aliases: []string{"s"},
+			Usage:   "Shows TODO tasks",
+			Action:  Show,
+		},
 	}
 	app.Run(os.Args)
 }
-
-type Note struct {
-	Id          int
-	Name        string
-	Description string
-	State       Status
-	Created     time.Time
-	Updated     time.Time
-}
-
-type Status int8
-
-func (s *Status) isRelevant() bool {
-	return *s == New || *s == InProgress
-}
-
-const (
-	New        Status = 0
-	InProgress Status = 1
-	Done       Status = 2
-	Outdated   Status = 3
-)
