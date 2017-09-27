@@ -58,8 +58,6 @@ func AddNote(name string, description string) (err error) {
 }
 
 func ShowAll() (notes []Note, err error) {
-	AddNote("Test", "Test test test")
-	AddNote("Test2", "Test2 test2 test2")
 	notes, err = readLines()
 	return
 }
