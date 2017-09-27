@@ -50,7 +50,7 @@ func (n *Note) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (n *Note) String() string {
+func (n Note) String() string {
 	return fmt.Sprintf("Id: %d, Name: %s, Description: %s, State: %s, Last change: %s",
 		n.id, n.name, n.description, n.state, n.updated.Local().Format(time.RFC822))
 }
