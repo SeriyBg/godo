@@ -61,3 +61,7 @@ func ShowAll() (notes []Note, err error) {
 	notes, err = readLines()
 	return
 }
+
+func CompleteById(id int) (err error) {
+	return
+}
