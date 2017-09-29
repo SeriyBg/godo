@@ -20,9 +20,9 @@ func Show(c *cli.Context) (err error) {
 }
 
 func Complete(c *cli.Context) (err error) {
-	id := c.Args().Get(0)
+	id := c.String("id")
 	if len(id) != 0 {
-		println(id)
+		repository.CompleteById(id)
 	}
 	return
 }
@@ -30,20 +30,20 @@ func Complete(c *cli.Context) (err error) {
 func main() {
 	app := cli.NewApp()
 	app.Name = "godo"
-	app.Usage = "Simple CLI TODO application written in Go"
+	app.Usage = "Simple CLI To-Do application written in Go"
 	app.Commands = []cli.Command{
 		{
 			Name:    "add",
 			Aliases: []string{"a"},
-			Usage:   "Create a new TODO task",
+			Usage:   "Create a new To-Do task",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "name, n",
-					Usage: "TODO task name",
+					Usage: "To-Do task name",
 				},
 				cli.StringFlag{
 					Name:  "description, d",
-					Usage: "TODO task description",
+					Usage: "To-Do task description",
 				},
 			},
 			Action: Add,
@@ -51,17 +51,21 @@ func main() {
 		{
 			Name:    "show",
 			Aliases: []string{"s"},
-			Usage:   "Shows TODO tasks",
+			Usage:   "Shows To-Do tasks",
 			Action:  Show,
 		},
 		{
 			Name:    "complete",
 			Aliases: []string{"c"},
-			Usage:   "Complete TODO task",
+			Usage:   "Complete To-Do task",
 			Flags: []cli.Flag{
+				//cli.StringFlag{
+				//	Name:  "name, n",
+				//	Usage: "To-Do task name",
+				//},
 				cli.StringFlag{
-					Name:  "name, n",
-					Usage: "TODO task name",
+					Name:  "id, i",
+					Usage: "To-Do task id",
 				},
 			},
 			Action: Complete,

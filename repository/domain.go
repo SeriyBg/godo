@@ -7,7 +7,7 @@ import (
 )
 
 type Note struct {
-	id          int
+	id          string
 	name        string
 	description string
 	state       Status
@@ -16,7 +16,7 @@ type Note struct {
 }
 
 type jsonNote struct {
-	Id          int       `json:"id"`
+	Id          string    `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	State       Status    `json:"state"`
@@ -51,7 +51,7 @@ func (n *Note) MarshalJSON() ([]byte, error) {
 }
 
 func (n Note) String() string {
-	return fmt.Sprintf("Id: %d, Name: %s, Description: %s, State: %s, Last change: %s",
+	return fmt.Sprintf("Id: %s, Name: %s, Description: %s, State: %s, Last change: %s",
 		n.id, n.name, n.description, n.state, n.updated.Local().Format(time.RFC822))
 }
 
