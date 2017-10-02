@@ -80,6 +80,7 @@ func CompleteById(id string) (err error) {
 	notes, err := readLines()
 	file, err := storageFile(rewriteToFile)
 	var wg sync.WaitGroup
+	lock := make(chan bool, 1)
 
 	for i, note := range notes {
 		if note.id == id {
@@ -87,10 +88,12 @@ func CompleteById(id string) (err error) {
 			notes[i] = note
 		}
 		wg.Add(1)
-		go func(n Note) {
+		go func(n Note, lock chan bool) {
+			lock <- true
 			writeToFile(&n, file)
 			wg.Done()
-		}(note)
+			<-lock
+		}(note, lock)
 		if err != nil {
 			println(err.Error())
 			return
