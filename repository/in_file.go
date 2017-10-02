@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"encoding/json"
 	"github.com/satori/go.uuid"
-	"io/ioutil"
 	"os"
-	"strings"
+	"sync"
 	"time"
 )
 
+const readFromFile int = os.O_CREATE | os.O_RDONLY
 const appendToFile int = os.O_APPEND | os.O_CREATE | os.O_RDWR
+const rewriteToFile int = os.O_TRUNC | os.O_APPEND | os.O_RDWR
 const fileName = "storage"
 
 func storageFile(flag int) (file *os.File, err error) {
@@ -19,7 +20,7 @@ func storageFile(flag int) (file *os.File, err error) {
 }
 
 func readLines() (notes []Note, err error) {
-	file, err := storageFile(os.O_CREATE | os.O_RDONLY)
+	file, err := storageFile(readFromFile)
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
@@ -44,14 +45,13 @@ func writeToFile(note *Note, file *os.File) (err error) {
 	return
 }
 
-func rewriteFile(notes []Note) (err error) {
-	var jsonNotes []string = make([]string, len(notes), len(notes))
-	for i, note := range notes {
-		jsonNote, _ := json.Marshal(&note)
-		jsonNotes[i] = string(jsonNote)
+func rewriteFile(nc <-chan Note, file *os.File) (err error) {
+	for {
+		select {
+		case note := <-nc:
+			writeToFile(&note, file)
+		}
 	}
-	output := strings.Join(jsonNotes, "\n")
-	err = ioutil.WriteFile(fileName, []byte(output), 0666)
 	return
 }
 
@@ -78,16 +78,24 @@ func ShowAll() (notes []Note, err error) {
 
 func CompleteById(id string) (err error) {
 	notes, err := readLines()
+	file, err := storageFile(rewriteToFile)
+	var wg sync.WaitGroup
 
 	for i, note := range notes {
 		if note.id == id {
 			note.state = Done
 			notes[i] = note
 		}
+		wg.Add(1)
+		go func(n Note) {
+			writeToFile(&n, file)
+			wg.Done()
+		}(note)
 		if err != nil {
 			println(err.Error())
 			return
 		}
 	}
-	return rewriteFile(notes)
+	wg.Wait()
+	return
 }
