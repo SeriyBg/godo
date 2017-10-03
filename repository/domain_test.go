@@ -49,3 +49,17 @@ func TestNote_UnmarshalJSON(t *testing.T) {
 	}
 	assert.Equal(t, expectedNote, *note)
 }
+
+func TestNote_String(t *testing.T) {
+	timeNow := time.Date(2017, 11, 3, 1, 12, 42, 1, time.UTC)
+	note := Note{
+		id:          "any_gen_id",
+		name:        "note_name",
+		description: "note_desc",
+		state:       New,
+		created:     timeNow,
+		updated:     timeNow,
+	}
+
+	assert.Equal(t, "Id: any_gen_id, Name: note_name, Description: note_desc, State: New, Last change: 03 Nov 17 03:12 EET", note.String())
+}
