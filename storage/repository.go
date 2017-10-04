@@ -8,7 +8,7 @@ type Repository interface {
 	CompleteById(id string) (err error)
 }
 
-func GetRepository() Repository {
+func NewRepository() Repository {
 	return &inFileRepository{
 		fileName: fileName,
 	}

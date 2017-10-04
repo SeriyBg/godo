@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var repository = storage.GetRepository()
+var repository = storage.NewRepository()
 
 func Add(c *cli.Context) (err error) {
 	return repository.AddNote(c.String("name"), c.String("description"))
