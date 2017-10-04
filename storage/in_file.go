@@ -1,4 +1,4 @@
-package repository
+package storage
 
 import (
 	"bufio"
@@ -12,15 +12,18 @@ import (
 const readFromFile int = os.O_CREATE | os.O_RDONLY
 const appendToFile int = os.O_APPEND | os.O_CREATE | os.O_RDWR
 const rewriteToFile int = os.O_TRUNC | os.O_APPEND | os.O_RDWR
-const fileName = "storage"
 
-func storageFile(flag int) (file *os.File, err error) {
-	file, err = os.OpenFile(fileName, flag, 0666)
+type inFileRepository struct {
+	fileName string
+}
+
+func (r inFileRepository) storageFile(flag int) (file *os.File, err error) {
+	file, err = os.OpenFile(r.fileName, flag, 0666)
 	return
 }
 
-func readLines() (notes []Note, err error) {
-	file, err := storageFile(readFromFile)
+func (r inFileRepository) readLines() (notes []Note, err error) {
+	file, err := r.storageFile(readFromFile)
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
@@ -38,24 +41,14 @@ func readLines() (notes []Note, err error) {
 	return
 }
 
-func writeToFile(note *Note, file *os.File) (err error) {
+func (r inFileRepository) writeToFile(note *Note, file *os.File) (err error) {
 	marshaledJson, err := json.Marshal(note)
 	file.Write([]byte(marshaledJson))
 	file.WriteString("\n")
 	return
 }
 
-func rewriteFile(nc <-chan Note, file *os.File) (err error) {
-	for {
-		select {
-		case note := <-nc:
-			writeToFile(&note, file)
-		}
-	}
-	return
-}
-
-func AddNote(name string, description string) (err error) {
+func (r inFileRepository) AddNote(name string, description string) (err error) {
 	now := time.Now()
 	note := &Note{
 		id:          uuid.NewV4().String(),
@@ -65,20 +58,20 @@ func AddNote(name string, description string) (err error) {
 		created:     now,
 		updated:     now,
 	}
-	file, err := storageFile(appendToFile)
+	file, err := r.storageFile(appendToFile)
 	defer file.Close()
-	writeToFile(note, file)
+	r.writeToFile(note, file)
 	return
 }
 
-func ShowAll() (notes []Note, err error) {
-	notes, err = readLines()
+func (r inFileRepository) ShowAll() (notes []Note, err error) {
+	notes, err = r.readLines()
 	return
 }
 
-func CompleteById(id string) (err error) {
-	notes, err := readLines()
-	file, err := storageFile(rewriteToFile)
+func (r inFileRepository) CompleteById(id string) (err error) {
+	notes, err := r.readLines()
+	file, err := r.storageFile(rewriteToFile)
 	var wg sync.WaitGroup
 	lock := make(chan bool, 1)
 
@@ -90,7 +83,7 @@ func CompleteById(id string) (err error) {
 		wg.Add(1)
 		go func(n Note, lock chan bool) {
 			lock <- true
-			writeToFile(&n, file)
+			r.writeToFile(&n, file)
 			wg.Done()
 			<-lock
 		}(note, lock)

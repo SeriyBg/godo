@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/SeriyBg/godo/repository"
+	"github.com/SeriyBg/godo/storage"
 	"github.com/codegangsta/cli"
 	"os"
 )
+
+var repository = storage.GetRepository()
 
 func Add(c *cli.Context) (err error) {
 	return repository.AddNote(c.String("name"), c.String("description"))
@@ -53,16 +55,13 @@ func main() {
 			Aliases: []string{"s"},
 			Usage:   "Shows To-Do tasks",
 			Action:  Show,
+			Flags:   []cli.Flag{},
 		},
 		{
 			Name:    "complete",
 			Aliases: []string{"c"},
 			Usage:   "Complete To-Do task",
 			Flags: []cli.Flag{
-				//cli.StringFlag{
-				//	Name:  "name, n",
-				//	Usage: "To-Do task name",
-				//},
 				cli.StringFlag{
 					Name:  "id, i",
 					Usage: "To-Do task id",
