@@ -14,7 +14,7 @@ func Add(c *cli.Context) (err error) {
 }
 
 func Show(c *cli.Context) (err error) {
-	notes, err := repository.ShowAll()
+	notes, err := repository.GetAll()
 	for _, note := range notes {
 		fmt.Println(note)
 	}

@@ -14,11 +14,11 @@ func TestMain(m *testing.M) {
 }
 
 func setUp() {
-	os.MkdirAll("../testdata/", os.ModePerm)
+	os.MkdirAll("../testdata/storage", os.ModePerm)
 }
 
 func cleanUp() {
-	os.RemoveAll("../testdata/")
+	os.RemoveAll("../testdata/storage")
 }
 
 func TestInFileRepository_AddAndShowNote(t *testing.T) {
@@ -48,7 +48,7 @@ func TestInFileRepository_CompleteById(t *testing.T) {
 }
 
 func showAllNotes(t *testing.T, repo Repository) []Note {
-	notes, err := repo.ShowAll()
+	notes, err := repo.GetAll()
 	assert.NoError(t, err)
 	return notes
 }

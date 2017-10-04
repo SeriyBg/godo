@@ -64,7 +64,7 @@ func (r inFileRepository) AddNote(name string, description string) (err error) {
 	return
 }
 
-func (r inFileRepository) ShowAll() (notes []Note, err error) {
+func (r inFileRepository) GetAll() (notes []Note, err error) {
 	notes, err = r.readLines()
 	return
 }
