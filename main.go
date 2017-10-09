@@ -10,7 +10,7 @@ import (
 var repository = storage.NewRepository()
 
 func Add(c *cli.Context) (err error) {
-	return repository.AddNote(c.String("name"), c.String("description"))
+	return repository.Create(c.String("name"), c.String("description"))
 }
 
 func Show(c *cli.Context) (err error) {

@@ -23,7 +23,7 @@ func cleanUp() {
 
 func TestInFileRepository_AddAndShowNote(t *testing.T) {
 	repo := inFileRepository{fileName: "../testdata/add_show_storage"}
-	assert.NoError(t, repo.AddNote("test_add_and_show", "generated_description"))
+	assert.NoError(t, repo.Create("test_add_and_show", "generated_description"))
 
 	notes := showAllNotes(t, repo)
 	assert.Len(t, notes, 1)
@@ -34,7 +34,7 @@ func TestInFileRepository_AddAndShowNote(t *testing.T) {
 
 func TestInFileRepository_CompleteById(t *testing.T) {
 	repo := inFileRepository{fileName: "../testdata/complete_storage"}
-	assert.NoError(t, repo.AddNote("generated_name", "generated_description"))
+	assert.NoError(t, repo.Create("generated_name", "generated_description"))
 
 	notes := showAllNotes(t, repo)
 	assert.Len(t, notes, 1)

@@ -57,8 +57,8 @@ func (n Note) String() string {
 
 type Status string
 
-func (s *Status) isRelevant() bool {
-	return *s == New || *s == InProgress
+func (n *Note) IsRelevant() bool {
+	return n.state == New || n.state == InProgress
 }
 
 const (
@@ -67,3 +67,9 @@ const (
 	Done       Status = "Done"
 	Outdated   Status = "Outdated"
 )
+
+type Repository interface {
+	Create(name string, description string) (err error)
+	GetAll() (notes []Note, err error)
+	CompleteById(id string) (err error)
+}

@@ -48,7 +48,7 @@ func (r inFileRepository) writeToFile(note *Note, file *os.File) (err error) {
 	return
 }
 
-func (r inFileRepository) AddNote(name string, description string) (err error) {
+func (r inFileRepository) Create(name string, description string) (err error) {
 	now := time.Now()
 	note := &Note{
 		id:          uuid.NewV4().String(),
