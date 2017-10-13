@@ -72,4 +72,7 @@ type Repository interface {
 	Create(name string, description string) (err error)
 	GetAll() (notes []Note, err error)
 	CompleteById(id string) (err error)
+	FindAllBy(filter NoteFilter) (notes []Note, err error)
 }
+
+type NoteFilter func(note Note) bool

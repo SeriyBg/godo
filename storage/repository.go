@@ -1,8 +1,7 @@
 package storage
 
-var config = readConfig()
-
 func NewRepository() Repository {
+	config := readConfig()
 	return &inFileRepository{
 		fileName: config.FilePath,
 	}

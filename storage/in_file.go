@@ -95,3 +95,7 @@ func (r inFileRepository) CompleteById(id string) (err error) {
 	wg.Wait()
 	return
 }
+
+func (r inFileRepository) FindAllBy(filter NoteFilter) (notes []Note, err error) {
+	return
+}
