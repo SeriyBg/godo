@@ -96,6 +96,31 @@ func (r inFileRepository) CompleteById(id string) (err error) {
 	return
 }
 
+func (r inFileRepository) DeleteById(id string) (err error) {
+	notes, err := r.readLines()
+	file, err := r.storageFile(rewriteToFile)
+	var wg sync.WaitGroup
+	lock := make(chan bool, 1)
+
+	for _, note := range notes {
+		if note.id != id {
+			wg.Add(1)
+			go func(n Note, lock chan bool) {
+				lock <- true
+				r.writeToFile(&n, file)
+				wg.Done()
+				<-lock
+			}(note, lock)
+			if err != nil {
+				println(err.Error())
+				return
+			}
+		}
+	}
+	wg.Wait()
+	return
+}
+
 func (r inFileRepository) FindAllBy(filter NoteFilter) (notes []Note, err error) {
 	return
 }

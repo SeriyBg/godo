@@ -58,14 +58,12 @@ func (n Note) String() string {
 type Status string
 
 func (n *Note) IsRelevant() bool {
-	return n.state == New || n.state == InProgress
+	return n.state == New
 }
 
 const (
-	New        Status = "New"
-	InProgress Status = "In progress"
-	Done       Status = "Done"
-	Outdated   Status = "Outdated"
+	New  Status = "New"
+	Done Status = "Done"
 )
 
 type Repository interface {
@@ -73,6 +71,7 @@ type Repository interface {
 	GetAll() (notes []Note, err error)
 	CompleteById(id string) (err error)
 	FindAllBy(filter NoteFilter) (notes []Note, err error)
+	DeleteById(id string) (err error)
 }
 
 type NoteFilter func(note Note) bool

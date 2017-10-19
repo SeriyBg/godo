@@ -22,7 +22,7 @@ func cleanUp() {
 }
 
 func TestInFileRepository_AddAndShowNote(t *testing.T) {
-	repo := inFileRepository{fileName: "../testdata/add_show_storage"}
+	repo := inFileRepository{fileName: "../testdata/storage/add_show_storage"}
 	assert.NoError(t, repo.Create("test_add_and_show", "generated_description"))
 
 	notes := showAllNotes(t, repo)
@@ -33,18 +33,29 @@ func TestInFileRepository_AddAndShowNote(t *testing.T) {
 }
 
 func TestInFileRepository_CompleteById(t *testing.T) {
-	repo := inFileRepository{fileName: "../testdata/complete_storage"}
-	assert.NoError(t, repo.Create("generated_name", "generated_description"))
+	repo := inFileRepository{fileName: "../testdata/storage/complete_storage"}
+	noteId := createNewNote(t, repo)
+	assert.NoError(t, repo.CompleteById(noteId))
 
 	notes := showAllNotes(t, repo)
 	assert.Len(t, notes, 1)
-
-	noteId := notes[0].id
-	assert.NoError(t, repo.CompleteById(noteId))
-
-	notes = showAllNotes(t, repo)
-	assert.Len(t, notes, 1)
 	assert.Equal(t, Done, notes[0].state)
+}
+
+func TestInFileRepository_DeleteById(t *testing.T) {
+	repo := inFileRepository{fileName: "../testdata/storage/delete_storage"}
+	noteId := createNewNote(t, repo)
+	assert.NoError(t, repo.DeleteById(noteId))
+
+	notes := showAllNotes(t, repo)
+	assert.Len(t, notes, 0)
+}
+
+func createNewNote(t *testing.T, repo inFileRepository) (id string) {
+	assert.NoError(t, repo.Create("generated_name", "generated_description"))
+	notes := showAllNotes(t, repo)
+	assert.Len(t, notes, 1)
+	return notes[0].id
 }
 
 func showAllNotes(t *testing.T, repo Repository) []Note {
